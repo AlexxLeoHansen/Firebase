@@ -24,7 +24,7 @@ public class ShowAccount extends AppCompatActivity {
     private FirebaseUser userF;
     private Button bReset;
 
-    View.OnClickListener mSnacklickListener;
+    View.OnClickListener mSnackListener;
     InputMethodManager imm;
 
     @Override
@@ -61,12 +61,12 @@ public class ShowAccount extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(v.getWindowToken(),0); //remove keyboard
 
                 Snackbar.make(findViewById(R.id.activity_show_db),"Do you want to delete your account?", BaseTransientBottomBar.LENGTH_LONG)
-                        .setAction("DELETE", mSnacklickListener) //Set a button in the Snackbar
+                        .setAction("DELETE", mSnackListener) //Set a button in the Snackbar
                         .show();
-                finish();
+
             }
         });
-        mSnacklickListener = new View.OnClickListener(){ //Listener and Click for the Snackbar button
+        mSnackListener = new View.OnClickListener(){ //Listener and Click for the Snackbar button
             @Override
             public void onClick(View v) {
                 deleteUser();
@@ -90,7 +90,8 @@ public class ShowAccount extends AppCompatActivity {
                                             "an email for changing the password! Check it", BaseTransientBottomBar.LENGTH_SHORT)
                                             .show();
                                 }
-                                else Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_LONG);
+                                else
+                                    Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_LONG);
                             }
                         });
             }
@@ -105,7 +106,7 @@ public class ShowAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
-                Snackbar.make(findViewById(R.id.activity_show_db),"Aguuurr come back soon :)", BaseTransientBottomBar.LENGTH_LONG)
+                Snackbar.make(v,"Aguuurr come back soon :)", BaseTransientBottomBar.LENGTH_LONG)
                         .show();
                 finish();
             }
@@ -118,8 +119,7 @@ public class ShowAccount extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(),"USER DELETED",Toast.LENGTH_SHORT)
-                            .show();
+                    finish();
                 }
                 else
                     Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_SHORT)
