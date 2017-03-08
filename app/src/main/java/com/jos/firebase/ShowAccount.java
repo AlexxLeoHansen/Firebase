@@ -70,6 +70,7 @@ public class ShowAccount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteUser();
+
             }
         };
 
