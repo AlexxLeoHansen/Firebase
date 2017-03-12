@@ -11,18 +11,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ShowAccount extends AppCompatActivity {
+public class ShowAccountG extends AppCompatActivity {
 
     private TextView s_name;
     private Button bDeleteUser, bLogOut;
     private FirebaseAuth mAuth;
     private FirebaseUser userF;
     private Button bReset;
+    private GoogleSignInAccount account;
 
     View.OnClickListener mSnackListener;
     InputMethodManager imm;
@@ -30,16 +32,12 @@ public class ShowAccount extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_account);
+        setContentView(R.layout.show_account);
 
-        s_name = (TextView) findViewById(R.id.s_name);
+        s_name = (TextView) findViewById(R.id.g_name);
         bDeleteUser = (Button) findViewById(R.id.b_delete);
         bLogOut = (Button) findViewById(R.id.b_logout);
         bReset = (Button) findViewById(R.id.b_resetpass);
-
-        //necess   ary to create a Firebase instance for each activity
-        mAuth = FirebaseAuth.getInstance();
-        userF = mAuth.getCurrentUser();
 
         imm =(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
@@ -48,7 +46,8 @@ public class ShowAccount extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        s_name.setText(userF.getEmail());
+            s_name.setText(userF.getEmail());
+
 
 /*----------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,7 +113,7 @@ public class ShowAccount extends AppCompatActivity {
         });
     }
 
-    protected void deleteUser(){
+    private void deleteUser(){
 
         userF.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

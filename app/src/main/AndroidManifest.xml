@@ -15,7 +15,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ShowAccount"></activity>
+        <activity android:name=".ShowAccountG" />
+        <activity android:name=".ShowAccountF"></activity>
     </application>
 
 </manifest>

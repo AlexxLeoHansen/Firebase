@@ -74,16 +74,33 @@
         android:id="@+id/textView3"
         android:textStyle="normal|bold" />
 
+    <TextView
+        android:text="OR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/b_signIn"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_alignEnd="@+id/textView3" />
+
     <Button
         android:text="Log In"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/b_signIn"
+        android:layout_marginTop="19dp"
         android:layout_below="@+id/textView3"
         android:layout_alignRight="@+id/password"
-        android:layout_alignEnd="@+id/password"
-        android:layout_marginRight="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="19dp" />
+        android:layout_alignEnd="@+id/password" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/b_google"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/b_signIn"
+        android:layout_alignStart="@+id/b_signIn" />
 
 </RelativeLayout>
