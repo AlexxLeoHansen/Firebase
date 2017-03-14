@@ -6,63 +6,65 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class ShowAccountF extends AppCompatActivity{
+public class ShowAccountF extends AppCompatActivity {
 
-    private TextView gNameV,gEmailV;
-    private Button bDeleteUser, bLogOut, bReset;
-    private String gName,gEmail;
+    private TextView s_name;
+    private Button bDeleteUser, bLogOut;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser user;
-    private static int RC_SIGN_IN_GOOGLE = 0000;
+    private FirebaseUser userF;
+    private Button bReset;
+    private GoogleSignInAccount account;
+    private static int RC_GO_ACCOUNTG = 2100;
+    private static int RC_GO_ACCOUNTF = 2133;
+
     View.OnClickListener mSnackListener;
+    InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_account);
 
-        mAuth = FirebaseAuth.getInstance();
-
-        gNameV = (TextView) findViewById(R.id.g_name);
-        gEmailV = (TextView) findViewById(R.id.g_mail);
+        s_name = (TextView) findViewById(R.id.g_name);
         bDeleteUser = (Button) findViewById(R.id.b_delete);
         bLogOut = (Button) findViewById(R.id.b_logout);
         bReset = (Button) findViewById(R.id.b_resetpass);
 
-        mAuthListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser()!=null) {
-
-                }
-                else {
-                   errorgoback();
-                }
-            }
-        };
+        imm =(InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getUserData();
 
+            s_name.setText(userF.getEmail());
+
+
+/*----------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+    DELETE USER
+------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------*/
         bDeleteUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                imm.hideSoftInputFromWindow(v.getWindowToken(),0); //remove keyboard
+
                 Snackbar.make(findViewById(R.id.activity_show_db),"Do you want to delete your account?", BaseTransientBottomBar.LENGTH_LONG)
                         .setAction("DELETE", mSnackListener) //Set a button in the Snackbar
                         .show();
+
             }
         });
         mSnackListener = new View.OnClickListener(){ //Listener and Click for the Snackbar button
@@ -73,52 +75,58 @@ public class ShowAccountF extends AppCompatActivity{
             }
         };
 
+/*----------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+    RESET PASSWORD BY EMAIL
+------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------*/
+        bReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.sendPasswordResetEmail(userF.getEmail())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Snackbar.make(findViewById(R.id.activity_show_db),"We have sent you " +
+                                            "an email for changing the password! Check it", BaseTransientBottomBar.LENGTH_SHORT)
+                                            .show();
+                                }
+                                else
+                                    Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_LONG);
+                            }
+                        });
+            }
+        });
+/*----------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------
+    LOG OUT
+------------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------*/
+
         bLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.removeAuthStateListener(mAuthListener);
                 mAuth.signOut();
+                Snackbar.make(v,"Aguuurr come back soon :)", BaseTransientBottomBar.LENGTH_LONG)
+                        .show();
                 finish();
             }
         });
     }
 
-    private void getUserData(){
-        user = mAuth.getCurrentUser();
-        gName = user.getDisplayName();
-        gEmail = user.getEmail();
-        gNameV.setText(gName);
-        gEmailV.setText(gEmail);
-    }
-    private void errorgoback(){
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(Toast.LENGTH_SHORT);
-                    ShowAccountF.this.finish();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Toast.makeText(getApplicationContext(), "Error questing Google Sign In", Toast.LENGTH_SHORT);
-        thread.start();
-    }
     private void deleteUser(){
-        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        userF.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-                    finish();
+                    finishActivity(RC_GO_ACCOUNTF);
                 }
-                else {
-                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG)
+                else
+                    Toast.makeText(getApplicationContext(),task.getException().getMessage(),Toast.LENGTH_SHORT)
                             .show();
-                }
             }
         });
     }
 }
-
